@@ -4,8 +4,7 @@
   "description": "L'ennesimo bot di telegram per alleviare la sanità mentale degli studenti che chiedono sempre le stesse domande e degli studenti che rispondono sempre alle stesse domande. Magari anche qualcos'altro",
   "main": "cybersecbot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node cybersecbot.js"
+    "start": "node cybersecbot.js"
   },
   "repository": {
     "type": "git",
@@ -16,9 +15,5 @@
   "bugs": {
     "url": "https://github.com/SangueSpada/CyberSecBot/issues"
   },
-  "homepage": "https://github.com/SangueSpada/CyberSecBot#readme",
-  "dependencies": {
-    "dotenv": "^16.3.1",
-    "node-telegram-bot-api": "^0.63.0"
-  }
+  "homepage": "https://github.com/SangueSpada/CyberSecBot#readme"
 }
