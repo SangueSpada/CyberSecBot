@@ -3,6 +3,8 @@ const TelegramBot = require('node-telegram-bot-api');
 const botoptions= {polling: true}
 let bot = new TelegramBot(process.env.TG_BOT, botoptions);
 
+
+const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
 //general message options
 var general_links={
     bando_iscrizione:'https://corsidilaurea.uniroma1.it/sites/default/files/documenti_ufficiali/2023/169/29389_i.pdf',
@@ -39,40 +41,55 @@ var certificato_inglese=`As English language verification you can attach an engl
 
 var materiale=`Notes, recording, and other material relative to the courses of cybersecurity can be found [here](${general_links.materiale})`
 
+startlink="t.me/CyberSecSapienzaBot?start="
+
 bot.onText(/verifica dei requisiti/i, (msg) => {
-    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    regex ="verifica_dei_requisiti";
     console.log(msg);
     text=verifica_dei_requisiti;
     bot.sendMessage(msg.chat.id,text,options);
 });
 
-bot.onText(/piano di studi|study plan/i, (msg) => {
-    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+bot.onText(/piano di studi|study plan|percorso formativo/i, (msg) => {
+    regex ="piano_di_studi";
     console.log(msg);
     text=study_plan;
     bot.sendMessage(msg.chat.id,text,options);
 });
 
 bot.onText(/esami a scelta|esami opzionali/i, (msg) => {
-    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    regex ="esami_a_scelta";
     console.log(msg)
     text=esami_a_scelta;
     bot.sendMessage(msg.chat.id,text,options);
 });
 
 bot.onText(/inglese/i, (msg) => {
-    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    regex ="inglese"
     console.log(msg)
     text=certificato_inglese;
     bot.sendMessage(msg.chat.id,text,options);
 });
 
 bot.onText(/materiale|lezioni registrate|registrazioni/i, (msg) => {
-    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    regex ="materiale"
     console.log(msg)
     text=materiale;
-    bot.sendMessage(msg.chat.id,text,options);
+    
 });
+
+bot.onText(/\/start/,(msg) =>)
+
+function replyPrivate(msg,text,regex){
+    try{
+        userid=msg.from.user.id
+        bot.sendMessage(userid,text,options);
+
+    }
+    catch{
+
+    }
+}
 /*
 bot.onText('//i', (msg) => {
     const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
