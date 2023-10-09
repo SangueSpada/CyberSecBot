@@ -4,7 +4,7 @@ const botoptions= {polling: true}
 let bot = new TelegramBot(process.env.TG_BOT, botoptions);
 
 
-const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+
 //general message options
 var general_links={
     bando_iscrizione:'https://corsidilaurea.uniroma1.it/sites/default/files/documenti_ufficiali/2023/169/29389_i.pdf',
@@ -30,7 +30,6 @@ Prof Daniele Venturi is the responsible and can be contacted thorugh its email \
 
 It is necessary to choose a total of 30 CFU. 18 CFU of them must be chosen among the exams of Cybersecurity course but it's NOT compulsory to choose them all from the same orientation. 12 CFU can be choosen (almost) freely.`
 
-
 var esami_a_scelta=`The exams most chosen by Cybersecurity students are Practical Network Defense and Risk Management.
 
 You can take the exams whenever you want but you cannot take them before the year and semester in which they are scheduled.
@@ -43,51 +42,95 @@ var materiale=`Notes, recording, and other material relative to the courses of c
 
 startlink="t.me/CyberSecSapienzaBot?start="
 
-bot.onText(/verifica dei requisiti/i, (msg) => {
-    regex ="verifica_dei_requisiti";
+bot.onText(/verifica dei requisiti/i, async (msg) => {
+    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
     console.log(msg);
-    text=verifica_dei_requisiti;
-    bot.sendMessage(msg.chat.id,text,options);
-});
-
-bot.onText(/piano di studi|study plan|percorso formativo/i, (msg) => {
-    regex ="piano_di_studi";
-    console.log(msg);
-    text=study_plan;
-    bot.sendMessage(msg.chat.id,text,options);
-});
-
-bot.onText(/esami a scelta|esami opzionali/i, (msg) => {
-    regex ="esami_a_scelta";
-    console.log(msg)
-    text=esami_a_scelta;
-    bot.sendMessage(msg.chat.id,text,options);
-});
-
-bot.onText(/inglese/i, (msg) => {
-    regex ="inglese"
-    console.log(msg)
-    text=certificato_inglese;
-    bot.sendMessage(msg.chat.id,text,options);
-});
-
-bot.onText(/materiale|lezioni registrate|registrazioni/i, (msg) => {
-    regex ="materiale"
-    console.log(msg)
-    text=materiale;
-    
-});
-
-bot.onText(/\/start/,(msg) =>)
-
-function replyPrivate(msg,text,regex){
-    try{
-        userid=msg.from.user.id
-        bot.sendMessage(userid,text,options);
-
+    let text=verifica_dei_requisiti;
+    if(msg.chat.type != "private"){
+        let regex ="verifica_dei_requisiti";
+        replyPrivate(msg,text,regex); 
     }
-    catch{
+    else bot.sendMessage(msg.chat.id,text,options);
+});
 
+bot.onText(/piano di studi|study plan|percorso formativo/i, async (msg) => {
+    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    console.log(msg);
+    let text=study_plan;
+    if(msg.chat.type != "private"){
+        let regex ="piano_di_studi";
+        await replyPrivate(msg,text,regex); 
+    }
+    else bot.sendMessage(msg.chat.id,text,options);
+});
+
+bot.onText(/esami a scelta|esami opzionali/i, async (msg) => {
+    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    console.log(msg);
+    let text=esami_a_scelta;
+    if(msg.chat.type != "private"){
+        let regex ="esami_a_scelta";
+        await replyPrivate(msg,text,regex); 
+    }
+    else bot.sendMessage(msg.chat.id,text,options);
+});
+
+bot.onText(/B2/i, async (msg) => {
+    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    console.log(msg);
+    let text=certificato_inglese;
+    if(msg.chat.type != "private"){
+        let regex ="inglese";
+        await replyPrivate(msg,text,regex); 
+    }
+    else bot.sendMessage(msg.chat.id,text,options);
+});
+
+bot.onText(/materiale|lezioni registrate|registrazioni/i, async (msg) => {
+    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    console.log(msg)
+    let text=materiale;
+    if(msg.chat.type != "private"){
+        let regex ="materiale"
+        await replyPrivate(msg,text,regex); 
+    }
+    else bot.sendMessage(msg.chat.id,text,options);
+});
+
+bot.onText(/\/start/,async (msg) => {
+    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    var text;
+    if(msg.text.includes("verifica_dei_requisiti")) text=verifica_dei_requisiti;
+    else if(msg.text.includes("piano_di_studi")) text=study_plan;
+    else if(msg.text.includes("esami_a_scelta")) text=esami_a_scelta;
+    else if(msg.text.includes("inglese")) text=certificato_inglese;
+    else if(msg.text.includes("materiale")) text=materiale;
+    else{
+        text=`Hi! Write me a topic you want more information about. You can choose between
+\`verifica dei requisiti\`
+\`study plan\`
+\`esami a scelta\`
+\`materiale\`
+\`B2\` (english certification)`;
+    }
+    bot.sendMessage(msg.chat.id,text,options);
+
+});
+
+async function replyPrivate(msg,text,regex){
+    console.log(msg);
+    const options= {parse_mode: "Markdown",reply_to_message_id: msg.message_id};
+    try{
+        userid=msg.from.id
+        await bot.sendMessage(userid,text,{parse_mode: "Markdown"});
+        let to_eliminate=await bot.sendMessage(msg.chat.id,"I wrote you in private!",options);
+        setTimeout(() => bot.deleteMessage(to_eliminate.chat.id,to_eliminate.message_id), 10000)
+    }
+    catch{ //user did not started the bot
+        userid=msg.from.id
+        text=`Allow me to reply you in [private!](${startlink+regex})`;
+        let to_eliminate= await bot.sendMessage(msg.chat.id,text,options);
+        setTimeout(() => bot.deleteMessage(to_eliminate.chat.id,to_eliminate.message_id), 15000)
     }
 }
 /*
